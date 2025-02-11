@@ -1,0 +1,8 @@
+fastapi
+uvicorn
+langchain
+pydantic
+httpx
+langchain_community
+psycopg2-binary
+pgvector
