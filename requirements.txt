@@ -6,3 +6,4 @@ httpx
 langchain_community
 psycopg2-binary
 pgvector
+fastapi-cache2

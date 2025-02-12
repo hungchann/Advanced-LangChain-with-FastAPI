@@ -11,6 +11,9 @@ from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 from models import DocumentModel, DocumentResponse
 from store import AsnyPgVector
 from store_factory import get_vector_store
+from fastapi_cache import FastAPICache
+from fastapi_cache.backends.inmemory import InMemoryBackend
+from fastapi_cache.decorator import cache
 
 load_dotenv(find_dotenv())
 
@@ -68,6 +71,10 @@ except ValueError as e:
 except Exception as e:
     raise HTTPException(status_code=500, detail=str(e))
 
+@app.on_event("startup")
+async def startup():
+    FastAPICache.init(InMemoryBackend())
+
 @app.get("/")
 async def root():
     return {"message": "Welcome to the API"}
@@ -98,6 +105,7 @@ async def add_documents(documents: list[DocumentModel]):
 
 
 @app.get("/get-all-ids/")
+@cache(expire=60)  # Cache the result for 60 seconds
 async def get_all_ids():
     try:
         if isinstance(pgvector_store, AsnyPgVector):
